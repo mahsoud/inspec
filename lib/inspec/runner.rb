@@ -107,7 +107,8 @@ module Inspec
       return if @conf['reporter'].nil?
 
       @conf['reporter'].each do |reporter|
-        Inspec::Reporters.render(reporter, run_data)
+        success = Inspec::Reporters.render(reporter, run_data)
+        return false if !success
       end
     end
 
@@ -130,7 +131,8 @@ module Inspec
     def run_tests(with = nil)
       @run_data = @test_collector.run(with)
       # dont output anything if we want a report
-      render_output(@run_data) unless @conf['report']
+      # unless @conf['report']
+      return 1 if !render_output(@run_data)
       @test_collector.exit_code
     end
 
